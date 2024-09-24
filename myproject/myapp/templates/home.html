@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Evidencia 1 Algoritmos Avanzados</title>
+    <style>
+        .growing-textarea {
+            min-height: 50px;
+            max-height: 300px;
+            resize: none;
+            overflow-y: hidden;
+        }
+
+        .highlight {
+            background-color: yellow;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <textarea class="growing-textarea" name="user_T" placeholder="Introduce tu Texto"></textarea>
+        <textarea class="growing-textarea" name="user_P" placeholder="Patron a encontrar"></textarea>
+        <button type="submit">Send</button>
+    </form>
+
+    {% if T %}
+        <p>You entered: {{ highlighted_text|safe }}</p>
+    {% endif %}
+
+    <script>
+        const textarea = document.querySelector('.growing-textarea');
+        textarea.addEventListener('input', autoResize, false);
+        
+        function autoResize() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        }
+    </script>
+</body>
+</html>
