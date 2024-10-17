@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autocompletar</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input[type="file"] {
+            margin: 8px 0;
+        }
+        #autocomplete-input {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .autocomplete-items {
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #fff; /* Match with button background */
+        }
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #d4d4d4; 
+        }
+        .autocomplete-items div:hover {
+            background-color: #e9e9e9; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Autocompletar</h1>
+    <form action="{% url 'autocompletar' %}" method="get">
+        <button type="submit">Autocompletar</button>
+    </form>
+    <form action="{% url 'lcs' %}" method="get">
+        <button type="submit">Longest Common Substring</button>
+    </form>
+    <form action="{% url 'home' %}" method="get">
+        <button type="submit">KMP</button>
+    </form>
+    <form action="{% url 'manacher' %}" method="get">
+        <button type="submit">Manacher</button>
+    </form>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="fileauto" accept=".txt">
+        <button type="submit">Upload</button>
+    </form>
+
+    <div>
+        <input type="text" id="autocomplete-input" placeholder="Start typing...">
+        <div id="autocomplete-list" class="autocomplete-items"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#autocomplete-input').on('input', function() {
+                var userInput = $(this).val();
+                if (userInput.length > 0) {
+                    $.ajax({
+                        url: '{% url "autocompletar" %}',
+                        method: 'POST',
+                        data: {
+                            'userWord': userInput,
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'
+                        },
+                        success: function(response) {
+                            var suggestions = response.suggestions;
+                            var autocompleteList = $('#autocomplete-list');
+                            autocompleteList.empty();
+                            suggestions.forEach(function(suggestion) {
+                                autocompleteList.append('<div>' + suggestion + '</div>');
+                            });
+                        }
+                    });
+                } else {
+                    $('#autocomplete-list').empty();
+                }
+            });
+
+            $(document).on('click', '.autocomplete-items div', function() {
+                $('#autocomplete-input').val($(this).text());
+                $('#autocomplete-list').empty();
+            });
+        });
+    </script>
+</body>
+</html>

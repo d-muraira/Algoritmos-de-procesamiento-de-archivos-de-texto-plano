@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        p {
+            background-color: #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            /* Set a maximum width */
+            max-width: 800px;
+            /* Ensure text breaks and wraps */
+            word-wrap: break-word;
+            /* Or use overflow-wrap */
+            overflow-wrap: break-word;
+        }
+        .highlight {
+        background-color: green;
+        font-weight: bold;
+    </style>
+</head>
+<body>
+    <h1>Manacher</h1>
+    <!-- URLS Template -->
+    <form action="{% url 'autocompletar' %}" method="get">
+        <button type="submit">Autocompletar</button>
+    </form>
+    <form action="{% url 'lcs' %}" method="get">
+        <button type="submit">Longest Common Substring</button>
+    </form>
+    <form action="{% url 'home' %}" method="get">
+        <button type="submit">KMP</button>
+    </form>
+    <form action="{% url 'manacher' %}" method="get">
+        <button type="submit">Manacher</button>
+    </form>
+    <!-- End URLS Template -->
+   
+    <form method="POST"  enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="text_file">Upload a .txt file:</label>
+        <input type="file" name="filemana" id="fileauto">
+        <button type="submit">Palindromo</button>
+    </form>
+    {% if highlighted_text %}
+    <h2>Input Text with Highlighted Palindrome:</h2>
+    <p>{{ highlighted_text|safe }}</p>
+
+    <h2>Longest Palindrome:</h2>
+    <p>{{ message }}</p>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ message }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        p {
+            background-color: #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            /* Set a maximum width */
+            max-width: 800px;
+            /* Ensure text breaks and wraps */
+            word-wrap: break-word;
+            /* Or use overflow-wrap */
+            overflow-wrap: break-word;
+        }
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    <!-- URLS Template -->
+    <form action="{% url 'autocompletar' %}" method="get">
+        <button type="submit">Autocompletar</button>
+    </form>
+    <form action="{% url 'lcs' %}" method="get">
+        <button type="submit">Longest Common Substring</button>
+    </form>
+    <form action="{% url 'home' %}" method="get">
+        <button type="submit">KMP</button>
+    </form>
+    <form action="{% url 'manacher' %}" method="get">
+        <button type="submit">Manacher</button>
+    </form>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="text_file">
+        <input type="text" name="user_P" placeholder="Encontrar Patron" value="{{ P }}">
+        <input type="hidden" name="current_match" value="{{ current_match }}">
+        <input type="hidden" name="T" value="{{ T }}">
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if highlighted_text %}
+        <div>
+            <h3>Resultado:</h3>
+            <p>{{ highlighted_text|safe }}</p>
+            {% if total_matches > 0 %}
+                <p>Aparición {{ current_match|add:1 }} de {{ total_matches }}</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="T" value="{{ T }}">
+                    <input type="hidden" name="user_P" value="{{ P }}">
+                    <input type="hidden" name="current_match" value="{{ current_match|add:-1 }}">
+                    <button type="submit" {% if current_match == 0 %}disabled{% endif %}>Anterior</button>
+                </form>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="T" value="{{ T }}">
+                    <input type="hidden" name="user_P" value="{{ P }}">
+                    <input type="hidden" name="current_match" value="{{ current_match|add:1 }}">
+                    <button type="submit" {% if current_match == total_matches|add:-1 %}disabled{% endif %}>Siguiente</button>
+                </form>
+            {% else %}
+                <p>No se encontraron coincidencias.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</body>
+</html>
